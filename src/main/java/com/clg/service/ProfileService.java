@@ -7,6 +7,8 @@ import com.clg.sequence.SequenceGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProfileService {
     @Autowired
@@ -19,12 +21,16 @@ public class ProfileService {
         return profileRepository.save(profileData);
     }
 
-    public Profile getProfile(String username) {
-        return profileRepository.findByUsername(username);
+    public Optional<Profile> getProfile(String username) {
+         return profileRepository.findByUsername(username);
     }
 
     public Profile updateProfile(Profile updatedProfile) {
         return profileRepository.save(updatedProfile);
+    }
+
+    public void deleteProfile(String username) {
+        profileRepository.deleteByUsername(username);
     }
 
 }

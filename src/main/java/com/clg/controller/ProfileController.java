@@ -8,6 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/profile")
 public class ProfileController {
@@ -30,12 +32,12 @@ public class ProfileController {
 
     @PutMapping("/update/{username}")
     public ResponseEntity<Profile> updateProfile(@PathVariable String username, @RequestBody Profile updatedProfile) {
-        Profile existingProfile = profileService.getProfile(username);
-        if (existingProfile == null) {
+        Optional<Profile> optionalProfile = profileService.getProfile(username);
+        if (!optionalProfile.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-
-        existingProfile.setUserimagePath(updatedProfile.getUserimagePath());
+        Profile existingProfile = optionalProfile.get();
+        existingProfile.setUserImagePath(updatedProfile.getUserImagePath());
         existingProfile.setDesignation(updatedProfile.getDesignation());
         existingProfile.setAddress(updatedProfile.getAddress());
         existingProfile.setEmail(updatedProfile.getEmail());
@@ -45,6 +47,19 @@ public class ProfileController {
 
         Profile updated = profileService.updateProfile(existingProfile);
         return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/delete/{username}")
+    public ResponseEntity<String> deleteProfile(@PathVariable String username) {
+        profileService.deleteProfile(username);
+        return ResponseEntity.ok("deleted");
+    }
+
+    @GetMapping("/get/{userName}")
+    public ResponseEntity<Object> getProfile(@PathVariable String userName) {
+        Optional<Profile> profile = profileService.getProfile(userName);
+        return profile.isPresent() ?   ResponseEntity.ok(profile.get()) :  ResponseEntity.ok("Not Found");
+
     }
 
 }
