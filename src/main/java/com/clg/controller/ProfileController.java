@@ -4,11 +4,13 @@ import com.clg.model.Profile;
 import com.clg.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/profile")
@@ -37,6 +39,8 @@ public class ProfileController {
             return ResponseEntity.notFound().build();
         }
         Profile existingProfile = optionalProfile.get();
+        existingProfile.setFirstName(updatedProfile.getFirstName());
+        existingProfile.setLastName(updatedProfile.getLastName());
         existingProfile.setUserImagePath(updatedProfile.getUserImagePath());
         existingProfile.setDesignation(updatedProfile.getDesignation());
         existingProfile.setAddress(updatedProfile.getAddress());
@@ -44,7 +48,7 @@ public class ProfileController {
         existingProfile.setContactNumber(updatedProfile.getContactNumber());
         existingProfile.setSkills(updatedProfile.getSkills());
         existingProfile.setEducation(updatedProfile.getEducation());
-
+        existingProfile.setLanguages(updatedProfile.getLanguages());
         Profile updated = profileService.updateProfile(existingProfile);
         return ResponseEntity.ok(updated);
     }
@@ -61,5 +65,6 @@ public class ProfileController {
         return profile.isPresent() ?   ResponseEntity.ok(profile.get()) :  ResponseEntity.ok("Not Found");
 
     }
+
 
 }
